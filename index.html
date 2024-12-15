@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TOEIC Vocabulary Flashcards</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f9;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+        }
+
+        h1 {
+            color: #333;
+            margin-bottom: 20px;
+        }
+
+        .flashcard {
+            background-color: #fff;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            width: 300px;
+            height: 200px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            transition: transform 0.3s ease;
+            margin-bottom: 20px;
+            cursor: pointer;
+        }
+
+        .flashcard h2 {
+            margin: 0;
+            font-size: 24px;
+            color: #333;
+        }
+
+        .flashcard p {
+            font-size: 16px;
+            color: #555;
+            margin-top: 10px;
+            display: none;
+        }
+
+        .flashcard.show-definition p {
+            display: block;
+        }
+
+        .controls {
+            display: flex;
+            gap: 10px;
+        }
+
+        button {
+            padding: 10px 20px;
+            font-size: 16px;
+            color: #fff;
+            background-color: #007bff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        button:hover {
+            background-color: #0056b3;
+        }
+
+        button:disabled {
+            background-color: #ccc;
+            cursor: not-allowed;
+        }
+    </style>
+</head>
+<body>
+    <h1>TOEIC Vocabulary Flashcards</h1>
+    <div class="flashcard" id="flashcard">
+        <h2 id="word">Attend</h2>
+        <p id="definition">Tham dự</p>
+        <p id="example">Example: She will attend the meeting tomorrow.  
+        <br> **Nghĩa**: Cô ấy sẽ tham dự cuộc họp vào ngày mai.</p>
+    </div>
+    <div class="controls">
+        <button id="prevButton" disabled>Previous</button>
+        <button id="nextButton">Next</button>
+    </div>
+
+    <script>
+        const flashcards = [
+            { word: "Attend", definition: "Tham dự", example: "She will attend the meeting tomorrow. Nghĩa: Cô ấy sẽ tham dự cuộc họp vào ngày mai." },
+            { word: "Meeting", definition: "Cuộc họp", example: "The meeting starts at 10 AM. Nghĩa: Cuộc họp bắt đầu lúc 10 giờ sáng." },
+            { word: "Deadline", definition: "Hạn chót", example: "We need to meet the deadline for this project. Nghĩa: Chúng ta cần hoàn thành đúng hạn cho dự án này." },
+            { word: "Revenue", definition: "Doanh thu", example: "The company’s revenue increased this quarter. Nghĩa: Doanh thu của công ty tăng trong quý này." },
+            { word: "Profit", definition: "Lợi nhuận", example: "The profit margin was higher than expected. Nghĩa: Biên lợi nhuận cao hơn dự kiến." },
+            { word: "Reservation", definition: "Đặt chỗ", example: "I made a reservation at the hotel for two nights. Nghĩa: Tôi đã đặt phòng tại khách sạn cho hai đêm." },
+            { word: "Itinerary", definition: "Lịch trình", example: "The itinerary includes visits to three cities. Nghĩa: Lịch trình bao gồm các chuyến thăm ba thành phố." },
+            { word: "Salary", definition: "Lương", example: "Her salary will be reviewed next month. Nghĩa: Mức lương của cô ấy sẽ được xem xét vào tháng tới." },
+            { word: "Retirement", definition: "Nghỉ hưu", example: "He is planning for his retirement. Nghĩa: Anh ấy đang lên kế hoạch cho việc nghỉ hưu." },
+            { word: "Budget", definition: "Ngân sách", example: "The project is running under budget. Nghĩa: Dự án đang chạy dưới ngân sách." },
+            { word: "Agreement", definition: "Thỏa thuận", example: "Both parties have signed the agreement. Nghĩa: Cả hai bên đã ký thỏa thuận." },
+            { word: "Client", definition: "Khách hàng", example: "The company values its long-term clients. Nghĩa: Công ty coi trọng các khách hàng lâu dài của mình." },
+            { word: "Contract", definition: "Hợp đồng", example: "The contract was signed yesterday. Nghĩa: Hợp đồng đã được ký kết ngày hôm qua." },
+            { word: "Expense", definition: "Chi phí", example: "Travel expenses will be reimbursed. Nghĩa: Chi phí đi lại sẽ được hoàn trả." },
+            { word: "Invoice", definition: "Hóa đơn", example: "The invoice was sent to the client. Nghĩa: Hóa đơn đã được gửi cho khách hàng." },
+            { word: "Presentation", definition: "Bài thuyết trình", example: "Her presentation was very professional. Nghĩa: Bài thuyết trình của cô ấy rất chuyên nghiệp." },
+            { word: "Proposal", definition: "Đề xuất", example: "We need to review the proposal before approval. Nghĩa: Chúng ta cần xem xét đề xuất trước khi phê duyệt." },
+            { word: "Schedule", definition: "Lịch trình", example: "The project is on schedule. Nghĩa: Dự án đang đúng tiến độ." },
+            { word: "Shipment", definition: "Lô hàng", example: "The shipment arrived on time. Nghĩa: Lô hàng đã đến đúng giờ." },
+            { word: "Supplier", definition: "Nhà cung cấp", example: "We are looking for a new supplier. Nghĩa: Chúng tôi đang tìm kiếm một nhà cung cấp mới." },
+            { word: "Teamwork", definition: "Làm việc nhóm", example: "Good teamwork is essential for success. Nghĩa: Làm việc nhóm tốt là điều cần thiết để đạt được thành công." },
+            { word: "Training", definition: "Đào tạo", example: "The new employees will undergo training next week. Nghĩa: Các nhân viên mới sẽ tham gia đào tạo vào tuần tới." },
+            { word: "Venue", definition: "Địa điểm", example: "The venue for the event is the city hall. Nghĩa: Địa điểm tổ chức sự kiện là tòa thị chính." },
+            { word: "Audit", definition: "Kiểm toán", example: "The company will conduct an internal audit. Nghĩa: Công ty sẽ tiến hành kiểm toán nội bộ." },
+            { word: "Board", definition: "Ban giám đốc", example: "The board of directors approved the plan. Nghĩa: Ban giám đốc đã phê duyệt kế hoạch." },
+            { word: "Candidate", definition: "Ứng viên", example: "The company interviewed three candidates for the position. Nghĩa: Công ty đã phỏng vấn ba ứng viên cho vị trí này." },
+            { word: "Comply", definition: "Tuân thủ", example: "Employees must comply with company policies. Nghĩa: Nhân viên phải tuân thủ các chính sách của công ty." },
+            { word: "Delegate", definition: "Giao phó", example: "The manager delegated tasks to the team. Nghĩa: Người quản lý đã giao phó các nhiệm vụ cho đội ngũ." },
+            { word: "Efficiency", definition: "Hiệu quả", example: "New software improved the team’s efficiency. Nghĩa: Phần mềm mới đã cải thiện hiệu quả công việc của đội ngũ." },
+            { word: "Enclose", definition: "Đính kèm", example: "Please enclose your resume with the application. Nghĩa: Vui lòng đính kèm sơ yếu lý lịch của bạn với đơn xin việc." },
+            { word: "Expand", definition: "Mở rộng", example: "The company plans to expand its operations. Nghĩa: Công ty có kế hoạch mở rộng hoạt động của mình." },
+            { word: "Implement", definition: "Triển khai", example: "We need to implement the new strategy immediately. Nghĩa: Chúng ta cần triển khai chiến lược mới ngay lập tức." },
+            { word: "Inventory", definition: "Hàng tồn kho", example: "The inventory is updated monthly. Nghĩa: Hàng tồn kho được cập nhật hàng tháng." },
+            { word: "Negotiate", definition: "Đàm phán", example: "We need to negotiate better terms with suppliers. Nghĩa: Chúng ta cần đàm phán điều kiện tốt hơn với các nhà cung cấp." },
+            { word: "Policy", definition: "Chính sách", example: "The refund policy is clearly stated on the website. Nghĩa: Chính sách hoàn tiền được nêu rõ trên trang web." },
+            { word: "Promotion", definition: "Thăng chức", example: "She received a promotion last month. Nghĩa: Cô ấy đã được thăng chức vào tháng trước." },
+            { word: "Qualification", definition: "Bằng cấp", example: "The position requires specific qualifications. Nghĩa: Vị trí này yêu cầu các bằng cấp cụ thể." },
+            { word: "Strategy", definition: "Chiến lược", example: "The marketing strategy was successful. Nghĩa: Chiến lược marketing đã thành công." },
+            { word: "Supervise", definition: "Giám sát", example: "The manager will supervise the project closely. Nghĩa: Người quản lý sẽ giám sát chặt chẽ dự án." },
+            { word: "Vacancy", definition: "Vị trí trống", example: "The company has several vacancies for engineers. Nghĩa: Công ty có một số vị trí trống cho kỹ sư." }
+        ];
+
+        let currentIndex = 0;
+
+        const flashcard = document.getElementById("flashcard");
+        const wordElement = document.getElementById("word");
+        const definitionElement = document.getElementById("definition");
+        const exampleElement = document.getElementById("example");
+        const prevButton = document.getElementById("prevButton");
+        const nextButton = document.getElementById("nextButton");
+
+        function updateFlashcard() {
+            const card = flashcards[currentIndex];
+            wordElement.textContent = card.word;
+            definitionElement.textContent = card.definition;
+            exampleElement.textContent = card.example;
+            flashcard.classList.remove("show-definition");
+
+            prevButton.disabled = currentIndex === 0;
+            nextButton.disabled = currentIndex === flashcards.length - 1;
+        }
+
+        function showDefinition() {
+            flashcard.classList.toggle("show-definition");
+        }
+
+        prevButton.addEventListener("click", () => {
+            if (currentIndex > 0) {
+                currentIndex--;
+                updateFlashcard();
+            }
+        });
+
+        nextButton.addEventListener("click", () => {
+            if (currentIndex < flashcards.length - 1) {
+                currentIndex++;
+                updateFlashcard();
+            }
+        });
+
+        flashcard.addEventListener("click", showDefinition);
+
+        updateFlashcard();
+    </script>
+</body>
+</html>
